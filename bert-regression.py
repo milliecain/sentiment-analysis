@@ -156,3 +156,39 @@ results = trainer.evaluate()
 
 print(results)
 
+predictions = trainer.predict(test_dataset)
+
+preds = predictions.predictions.flatten()
+
+for i in range(10):
+    print(
+        "True:",
+        test_df.iloc[i]["sentiment"],
+        "Predicted:",
+        round(preds[i], 2)
+    )
+
+    predictions = trainer.predict(test_dataset)
+
+preds = predictions.predictions.flatten()
+
+results_df = test_df.copy()
+
+results_df["predicted"] = preds
+
+results_df["error"] = abs(
+    results_df["sentiment"] -
+    results_df["predicted"]
+)
+
+results_df.to_csv(
+    "prediction_results.csv",
+    index=False
+)
+
+print(
+    results_df.sort_values(
+        "error",
+        ascending=False
+    ).head(20)
+)
